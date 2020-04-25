@@ -5,8 +5,8 @@ const app = express()
 const http = require('http').Server(app)
 const io = require('socket.io')(http)
 const User = require('./models/user')
-const crypto = require('cryptojs')
-var messages = [];
+const cors = require('cors');
+app.use(cors());
 var i = 0;
 var idGeral = 0;
 var fucker = new User(1, 'Joanesio', '12345');
@@ -77,7 +77,6 @@ io.on('connection', async (socket) => {
 
     // Procedimento ao receber uma mensagem
     socket.on('message', (msg) => {
-        //messages.push(msg);
         io.emit('message', msg);
     })
 
