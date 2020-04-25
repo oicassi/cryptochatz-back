@@ -1,5 +1,5 @@
 "use strict";
-
+require('dotenv').config();
 const express = require('express')
 const app = express()
 const http = require('http').Server(app)
@@ -141,9 +141,9 @@ function sendUserDisconnect(userDisc) {
 function sendNewChatHoster(newHosterInfo) {
     io.emit('newHost', newHosterInfo);
 }
-
-http.listen(4444, () => {
-    console.log('Listen to the port 4444');
+var appPort = (process.env.PORT || 4444);
+http.listen(appPort, () => {
+    console.log(`Listen to the port ${appPort}`);
 })
 
 app.get('/', function(req, res){
