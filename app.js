@@ -145,3 +145,7 @@ function sendNewChatHoster(newHosterInfo) {
 http.listen(4444, () => {
     console.log('Listen to the port 4444');
 })
+
+app.get('/', function(req, res){
+    res.send('plupchat-backend is f***ing alive!! Yayyy');
+})
