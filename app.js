@@ -54,7 +54,7 @@ io.on('connection', async (socket) => {
             chatHoster.id = userChatInfo.id;
             chatHoster.name = userChatInfo.name;
             chatHoster.socketId = userChatInfo.socketId;
-            io.emit('notifyChatStarter', {name: userChatInfo.name, id: userChatInfo.id});
+            io.emit('notifyChatStarter', { name: userChatInfo.name, id: userChatInfo.id });
         }
         let chatStartInfo = {
             name: chatHoster.name,
@@ -63,7 +63,7 @@ io.on('connection', async (socket) => {
             socketId: userChatInfo.socketId
         }
         await sendChatAck(chatStartInfo);
-        io.emit('newUser', {name: userChatInfo.name, id: userChatInfo.id});
+        io.emit('newUser', { name: userChatInfo.name, id: userChatInfo.id });
 
     })
 
@@ -97,23 +97,31 @@ io.on('connection', async (socket) => {
             chatStarted = false;
             idGeral = 0;
         } else {
+            if (chatHoster.socketId == socket.id) {
+                // Novo chatHoster
+                if (users.length > 1) {
+                    chatHoster.id = users[1].id;
+                    chatHoster.name = users[1].name;
+                    chatHoster.socketId = users[1].socketId;
+                } else {
+                    chatHoster.id = users[0].id;
+                    chatHoster.name = users[0].name;
+                    chatHoster.socketId = users[0].socketId;
+                }
+                sendNewChatHoster(chatHoster);
+            }
             for (let i = 0; i < users.length; i++) {
                 if (users[i].socketId == socket.id) {
                     await sendUserDisconnect(users[i]);
                     users.splice(i, 1);
                 }
             }
-            if (chatHoster.socketId == socket.id) {
-                // Novo chatHoster
-                chatHoster.id = users[0].id;
-                chatHoster.name = users[0].name;
-                chatHoster.socketId = users[0].socketId;
 
-                sendNewChatHoster(chatHoster);
-
-            }
         }
 
+    })
+    socket.on('typing', (id) => {
+        io.emit('someTyping', id);
     })
 })
 
@@ -146,6 +154,6 @@ http.listen(appPort, () => {
     console.log(`Listen to the port ${appPort}`);
 })
 
-app.get('/', function(req, res){
+app.get('/', function (req, res) {
     res.send('plupchat-backend is f***ing alive!! Yayyy');
 })
